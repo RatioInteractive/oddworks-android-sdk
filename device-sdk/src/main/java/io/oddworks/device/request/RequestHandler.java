@@ -309,7 +309,7 @@ public class RequestHandler {
      * @param endpoint endpoint string can optionally contain query params
      */
     private HttpUrl.Builder withIncluded(HttpUrl.Builder endpoint) {
-        return endpoint.addQueryParameter(Oddworks.QUERY_PARAM_INCLUDE, "true");
+        return endpoint;
     }
 
     private HttpUrl.Builder withPath(HttpUrl.Builder endpoint, String path) {

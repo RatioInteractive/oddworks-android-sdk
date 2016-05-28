@@ -43,6 +43,8 @@ public class RestServiceProvider {
         return RestServiceProvider.instance;
     }
 
+    public static RequestHandler getRequestHandler() { return RequestHandler.instance; }
+
     public ApiCaller getApiCaller() {
         return this.apiCaller;
     }
