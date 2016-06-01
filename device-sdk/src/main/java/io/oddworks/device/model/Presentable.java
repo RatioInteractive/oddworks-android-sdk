@@ -8,7 +8,7 @@ public class Presentable {
     private final String description;
     private final MediaImage mediaImage;
 
-    protected Presentable(String title, String description, MediaImage mediaImage) {
+    public Presentable(String title, String description, MediaImage mediaImage) {
         this.title = title;
         this.description = description;
         this.mediaImage = mediaImage;
