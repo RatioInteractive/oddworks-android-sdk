@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.squareup.okhttp.Call;
@@ -16,7 +17,9 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import io.oddworks.device.Oddworks;
 import io.oddworks.device.exception.RestServicesNotInitialized;
@@ -108,8 +111,8 @@ public class RequestHandler {
         call.enqueue(callback);
     }
 
-    protected void getConfig(final Callback callback) {
-        HttpUrl.Builder builder = withIncluded(baseUrl.newBuilder());
+    protected void getConfig(final Callback callback, Map<String,List<String>> params) {
+        HttpUrl.Builder builder = withIncluded(baseUrl.newBuilder(), params);
         HttpUrl endpoint = withPath(builder, Oddworks.ENDPOINT_CONFIG).build();
 
         Request request = getOddRequest(
@@ -120,10 +123,15 @@ public class RequestHandler {
         enqueueOddCall(request, callback);
     }
 
-    protected void getView(final String id, final Callback callback) {
+    protected void getView(final String id, final Callback callback, boolean fetchIncluded, Map<String,List<String>> params) {
         String viewPath = String.format(Oddworks.ENDPOINT_VIEW, id);
 
-        HttpUrl.Builder builder = withIncluded(baseUrl.newBuilder());
+        HttpUrl.Builder builder = null;
+        if(fetchIncluded)
+            builder = withIncluded(baseUrl.newBuilder(), params);
+        else
+            builder = baseUrl.newBuilder();
+
         HttpUrl endpoint = withPath(builder, viewPath).build();
 
         Request request = getOddGetRequest(endpoint);
@@ -148,9 +156,15 @@ public class RequestHandler {
         enqueueOddCall(request, callback);
     }
 
-    protected void getCollection(String collectionId, Callback callback) {
+    protected void getCollection(String collectionId, Callback callback, boolean fetchIncluded, Map<String,List<String>> params) {
         String path = String.format(Oddworks.ENDPOINT_COLLECTION, collectionId);
-        HttpUrl.Builder builder = withIncluded(baseUrl.newBuilder());
+
+        HttpUrl.Builder builder = null;
+        if(fetchIncluded)
+            builder = withIncluded(baseUrl.newBuilder(), params);
+        else
+            builder = baseUrl.newBuilder();
+
         HttpUrl endpoint = withPath(builder, path).build();
         Request request = getOddGetRequest(endpoint);
         enqueueOddCall(request, callback);
@@ -180,27 +194,39 @@ public class RequestHandler {
         enqueueOddCall(request, callback);
     }
 
-    protected void getVideo(String videoId, Callback callback) {
+    protected void getVideo(String videoId, Callback callback, boolean fetchIncluded, Map<String,List<String>> params) {
         String path = String.format(Oddworks.ENDPOINT_VIDEO, videoId);
-        HttpUrl.Builder builder = withIncluded(baseUrl.newBuilder());
+        HttpUrl.Builder builder = null;
+        if(fetchIncluded)
+            builder = withIncluded(baseUrl.newBuilder(), params);
+        else
+            builder = baseUrl.newBuilder();
         HttpUrl endpoint = withPath(builder, path).build();
         Request request = getOddGetRequest(endpoint);
         enqueueOddCall(request, callback);
     }
 
-    protected void getLiveStream(String liveStreamId, Callback callback) {
+    protected void getLiveStream(String liveStreamId, Callback callback, boolean fetchIncluded, Map<String,List<String>> params) {
         String path = String.format(Oddworks.ENDPOINT_LIVE_STREAM, liveStreamId);
-        HttpUrl.Builder builder = withIncluded(baseUrl.newBuilder());
+        HttpUrl.Builder builder = null;
+        if(fetchIncluded)
+            builder = withIncluded(baseUrl.newBuilder(), params);
+        else
+            builder = baseUrl.newBuilder();
         HttpUrl endpoint = withPath(builder, path).build();
         Request request = getOddGetRequest(endpoint);
         enqueueOddCall(request, callback);
     }
 
-    protected void getPromotion(String promotionId, Callback callback, boolean fetchIncluded) {
+    protected void getPromotion(String promotionId, Callback callback) {
+        getPromotion(promotionId, callback, false, null);
+    }
+
+    protected void getPromotion(String promotionId, Callback callback, boolean fetchIncluded, Map<String,List<String>> params) {
         String path = String.format(Oddworks.ENDPOINT_PROMOTION, promotionId);
         HttpUrl.Builder builder = null;
         if(fetchIncluded)
-            builder = withIncluded(baseUrl.newBuilder());
+            builder = withIncluded(baseUrl.newBuilder(), params);
         else
             builder = baseUrl.newBuilder();
         HttpUrl endpoint = withPath(builder, path).build();
@@ -208,11 +234,15 @@ public class RequestHandler {
         enqueueOddCall(request, callback);
     }
 
-    protected void getExternal(String externalId, Callback callback, boolean fetchIncluded) {
+    protected void getExternal(String externalId, Callback callback) {
+        getExternal(externalId, callback, false, null);
+    }
+
+    protected void getExternal(String externalId, Callback callback, boolean fetchIncluded, Map<String,List<String>> params) {
         String path = String.format(Oddworks.ENDPOINT_EXTERNAL, externalId);
         HttpUrl.Builder builder = null;
         if(fetchIncluded)
-            builder = withIncluded(baseUrl.newBuilder());
+            builder = withIncluded(baseUrl.newBuilder(), params);
         else
             builder = baseUrl.newBuilder();
         HttpUrl endpoint = withPath(builder, path).build();
@@ -220,11 +250,15 @@ public class RequestHandler {
         enqueueOddCall(request, callback);
     }
 
-    protected void getEvent(String eventId, Callback callback, boolean fetchIncluded) {
+    protected void getEvent(String eventId, Callback callback) {
+        getEvent(eventId, callback, false, null);
+    }
+
+    protected void getEvent(String eventId, Callback callback, boolean fetchIncluded, Map<String,List<String>> params) {
         String path = String.format(Oddworks.ENDPOINT_EVENT, eventId);
         HttpUrl.Builder builder = null;
         if(fetchIncluded)
-            builder = withIncluded(baseUrl.newBuilder());
+            builder = withIncluded(baseUrl.newBuilder(), params);
         else
             builder = baseUrl.newBuilder();
         HttpUrl endpoint = withPath(builder, path).build();
@@ -232,11 +266,15 @@ public class RequestHandler {
         enqueueOddCall(request, callback);
     }
 
-    protected void getArticle(String articleId, Callback callback, boolean fetchIncluded) {
+    protected void getArticle(String articleId, Callback callback) {
+        getArticle(articleId, callback, false, null);
+    }
+
+    protected void getArticle(String articleId, Callback callback, boolean fetchIncluded, Map<String,List<String>> params) {
         String path = String.format(Oddworks.ENDPOINT_ARTICLES, articleId);
         HttpUrl.Builder builder = null;
         if(fetchIncluded)
-            builder = withIncluded(baseUrl.newBuilder());
+            builder = withIncluded(baseUrl.newBuilder(), params);
         else
             builder = baseUrl.newBuilder();
         HttpUrl endpoint = withPath(builder, path).build();
@@ -308,7 +346,11 @@ public class RequestHandler {
      * adds query parameter includ=true to endpoint string.
      * @param endpoint endpoint string can optionally contain query params
      */
-    private HttpUrl.Builder withIncluded(HttpUrl.Builder endpoint) {
+    private HttpUrl.Builder withIncluded(HttpUrl.Builder endpoint, Map<String,List<String>> params) {
+        
+        if (params != null && getIncludedParams(params) != null) {
+            endpoint.addQueryParameter(Oddworks.QUERY_PARAM_INCLUDE, getCommaSeparatedParamValues(getIncludedParams(params)));
+        }
         return endpoint;
     }
 
@@ -318,5 +360,13 @@ public class RequestHandler {
             endpoint.addPathSegment(part);
         }
         return endpoint;
+    }
+
+    public static List<String> getIncludedParams(Map<String,List<String>> params) {
+        return params != null ? params.get(Oddworks.QUERY_PARAM_INCLUDE) : null;
+    }
+
+    private static String getCommaSeparatedParamValues(List<String> values) {
+        return values != null ? TextUtils.join(",", values) : null;
     }
 }

@@ -10,6 +10,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import io.oddworks.device.exception.BadResponseCodeException;
 import io.oddworks.device.exception.OddAuthTokenUserMismatch;
@@ -45,24 +46,42 @@ public class ApiCaller {
         this.parser = parser;
     }
 
+    /** gets Config
+     *
+     * @param cb OddCallback **/
     public void getConfig(final OddCallback<Config> cb) {
+        getConfig(cb, null);
+    }
+
+    /** gets Config
+     *
+     * @param cb OddCallback
+     * @param params Map of params to be used as query params.  Can be null **/
+    public void getConfig(final OddCallback<Config> cb, Map<String,List<String>> params) {
         Callback requestCallback = getRequestCallback(cb, new ParseCall<Config>() {
             @Override
             public Config parse(String responseBody) {
                 return parser.parseConfig(responseBody);
             }
         });
-        requestHandler.getConfig(requestCallback);
+        requestHandler.getConfig(requestCallback, params);
     }
 
-    public void getView(final String id, final OddCallback<OddView> cb) {
+    /** gets OddView
+     *
+     * @param id view id
+     * @param cb OddCallback
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
+     * **/
+    public void getView(final String id, final OddCallback<OddView> cb, boolean fetchIncluded, Map<String,List<String>> params) {
         Callback requestCallback = getRequestCallback(cb, new ParseCall<OddView>() {
             @Override
             public OddView parse(String responseBody) {
                 return parser.parseViewResponse(responseBody);
             }
         });
-        requestHandler.getView(id, requestCallback);
+        requestHandler.getView(id, requestCallback, fetchIncluded, params);
     }
 
     public void getCollectionEntities(final OddCollection col, final OddCallback<List<OddObject>> cb) {
@@ -75,21 +94,33 @@ public class ApiCaller {
         requestHandler.getCollectionEntities(col.getId(), requestCallback);
     }
 
-    /** gets OddCollection and all entities within **/
-    public void getCollection(String collectionId, final OddCallback<OddCollection> cb) {
+    /** gets OddCollection and all entities within
+     *
+     * @param collectionId
+     * @param cb OddCallback
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
+     * **/
+    public void getCollection(String collectionId, final OddCallback<OddCollection> cb, boolean fetchIncluded, Map<String,List<String>> params) {
         Callback requestCallback = getRequestCallback(cb, new ParseCall<OddCollection>() {
             @Override
             public OddCollection parse(String responseBody) {
                 return parser.parseCollectionResponse(responseBody);
             }
         });
-        requestHandler.getCollection(collectionId, requestCallback);
+        requestHandler.getCollection(collectionId, requestCallback, fetchIncluded, params);
     }
 
     /** gets video with all related entities
-     * @param  isLiveStream true if this Media is a liveStream object in the api's catalog otherwise false.
-     *                          If Media#isLive() returns true then then this should be true. **/
-    public void getMedia(String collectionId, boolean isLiveStream, final OddCallback<Media> cb) {
+     *
+     * @param collectionId
+     * @param isLiveStream true if this Media is a liveStream object in the api's catalog otherwise false.
+     *                          If Media#isLive() returns true then then this should be true.
+     * @param cb OddCallback
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
+     * **/
+    public void getMedia(String collectionId, boolean isLiveStream, final OddCallback<Media> cb, boolean fetchIncluded, Map<String,List<String>> params) {
         Callback requestCallback = getRequestCallback(cb, new ParseCall<Media>() {
             @Override
             public Media parse(String responseBody) {
@@ -97,9 +128,9 @@ public class ApiCaller {
             }
         });
         if(isLiveStream)
-            requestHandler.getLiveStream(collectionId, requestCallback);
+            requestHandler.getLiveStream(collectionId, requestCallback, fetchIncluded, params);
         else
-            requestHandler.getVideo(collectionId, requestCallback);
+            requestHandler.getVideo(collectionId, requestCallback, fetchIncluded, params);
     }
 
     public void getSearch(final String term, final int limit, final int offset, final OddCallback<List<OddObject>> cb) {
