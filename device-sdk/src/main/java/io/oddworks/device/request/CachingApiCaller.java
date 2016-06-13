@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import io.oddworks.device.exception.BadResponseCodeException;
@@ -51,251 +52,420 @@ public class CachingApiCaller {
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
      */
     public void getPromotion(@NonNull String id,
                              @NonNull OddCallback<Promotion> cb,
-                             boolean forceFetchFromApi) {
-        Promotion stored = (Promotion)cache.getObject(id);
-        if(!forceFetchFromApi && stored != null) {
-            cb.onSuccess(stored);
-        } else {
-            getPromotionFromApi(id, cb, false);
+                             boolean forceFetchFromApi,
+                             boolean fetchIncluded,
+                             Map<String,List<String>> params) {
+
+        try {
+            Promotion stored = (Promotion)cache.getObject(id);
+            if(!forceFetchFromApi && stored != null && objectHasAllIncluded(stored, RequestHandler.getIncludedParams(params))) {
+                cb.onSuccess(stored);
+            } else {
+                getPromotionFromApi(id, cb, fetchIncluded, params);
+            }
+        } catch (Exception e) {
+            cb.onFailure(e);
         }
     }
 
-
-    public void getPromotion(@NonNull String id, @NonNull OddCallback<Promotion> cb) {
-        getPromotion(id, cb, false);
+    /**
+     * @param id
+     * @param cb OddCallback
+     * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     */
+    public void getPromotion(@NonNull String id, @NonNull OddCallback<Promotion> cb, boolean forceFetchFromApi) {
+        getPromotion(id, cb, forceFetchFromApi, false, null);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
      */
-    public void getProtionWithAllRelated(@NonNull final String id,
+    public void getPromotionWithAllRelated(@NonNull final String id,
                                          @NonNull final OddCallback<ObjectWithRelated<Promotion>> cb,
-                                         boolean forceFetchFromApi) {
+                                         boolean forceFetchFromApi,
+                                         boolean fetchIncluded,
+                                         Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetAllRelatedFromCache(id, cb))
-            getPromotionFromApi(id, new GatherAllRelatedCb<Promotion>(cb), true);
+            getPromotionFromApi(id, new GatherAllRelatedCb<Promotion>(cb), fetchIncluded, params);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
      */
-    public void getProtionWithRelationship(@NonNull final String id,
-                                         @NonNull final OddCallback<ObjectWithRelated<Promotion>> cb,
-                                         @NonNull final String relationshipName,
-                                         boolean forceFetchFromApi) {
+    public void getPromotionWithRelationship(@NonNull final String id,
+                                           @NonNull final OddCallback<ObjectWithRelated<Promotion>> cb,
+                                           @NonNull final String relationshipName,
+                                           boolean forceFetchFromApi,
+                                           boolean fetchIncluded,
+                                           Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetRelationshipFromCache(id, relationshipName, cb))
-            getPromotionFromApi(id, new GatherRelationshipCb<Promotion>(cb, relationshipName), true);
+            getPromotionFromApi(id, new GatherRelationshipCb<Promotion>(cb, relationshipName), fetchIncluded, params);
     }
 
-    private void getPromotionFromApi(String promotionId, final OddCallback<Promotion> cb, boolean fetchIncluded) {
+    /**
+     * @param id
+     * @param cb OddCallback
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
+     */
+    private void getPromotionFromApi(String id, final OddCallback<Promotion> cb, boolean fetchIncluded,
+                                     Map<String,List<String>> params) {
         Callback requestCallback = new RequestCallback<>(cb, new ParseCall<Promotion>() {
             @Override
             public Promotion parse(String responseBody) {
                 return parser.parsePromotionResponse(responseBody);
             }
         });
-        requestHandler.getPromotion(promotionId, requestCallback, fetchIncluded);
+        requestHandler.getPromotion(id, requestCallback, fetchIncluded, params);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
      */
-    public void getExternal(@NonNull String id, @NonNull OddCallback<External> cb, boolean forceFetchFromApi) {
-        External stored = (External)cache.getObject(id);
-        if(!forceFetchFromApi && stored != null) {
-            cb.onSuccess(stored);
-        } else {
-            getExternalFromApi(id, cb, false);
+    public void getExternal(@NonNull String id, @NonNull OddCallback<External> cb, boolean forceFetchFromApi,
+                            boolean fetchIncluded,
+                            Map<String,List<String>> params) {
+        try {
+            External stored = (External)cache.getObject(id);
+            if(!forceFetchFromApi && stored != null && objectHasAllIncluded(stored, RequestHandler.getIncludedParams(params))) {
+                cb.onSuccess(stored);
+            } else {
+                getExternalFromApi(id, cb, fetchIncluded, params);
+            }
+        } catch (Exception e) {
+            cb.onFailure(e);
         }
     }
 
-    public void getExternal(@NonNull String id, @NonNull OddCallback<External> cb) {
-        getExternal(id, cb, false);
+    /**
+     * @param id
+     * @param cb OddCallback
+     * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     */
+    public void getExternal(@NonNull String id, @NonNull OddCallback<External> cb, boolean forceFetchFromApi) {
+        getExternal(id, cb, forceFetchFromApi, false, null);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
      */
     public void getExternalWithAllRelated(@NonNull final String id,
-                                         @NonNull final OddCallback<ObjectWithRelated<External>> cb,
-                                         boolean forceFetchFromApi) {
+                                          @NonNull final OddCallback<ObjectWithRelated<External>> cb,
+                                          boolean forceFetchFromApi,
+                                          boolean fetchIncluded,
+                                          Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetAllRelatedFromCache(id, cb))
-            getExternalFromApi(id, new GatherAllRelatedCb<External>(cb), true);
+            getExternalFromApi(id, new GatherAllRelatedCb<External>(cb), fetchIncluded, params);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
      */
     public void getExternalWithRelationship(@NonNull final String id,
-                                           @NonNull final OddCallback<ObjectWithRelated<External>> cb,
-                                           @NonNull final String relationshipName,
-                                           boolean forceFetchFromApi) {
+                                            @NonNull final OddCallback<ObjectWithRelated<External>> cb,
+                                            @NonNull final String relationshipName,
+                                            boolean forceFetchFromApi,
+                                            boolean fetchIncluded,
+                                            Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetRelationshipFromCache(id, relationshipName, cb))
-            getExternalFromApi(id, new GatherRelationshipCb<>(cb, relationshipName), true);
+            getExternalFromApi(id, new GatherRelationshipCb<>(cb, relationshipName), fetchIncluded, params);
     }
 
-    private void getExternalFromApi(String id, OddCallback<External> cb, boolean fetchIncluded) {
+    /**
+     * @param id
+     * @param cb OddCallback
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
+     */
+    private void getExternalFromApi(String id, OddCallback<External> cb, boolean fetchIncluded,
+                                    Map<String,List<String>> params) {
         Callback requestCallback = new RequestCallback<>(cb, new ParseCall<External>() {
             @Override
             public External parse(String responseBody) {
                 return parser.parseExternalResponse(responseBody);
             }
         });
-        requestHandler.getExternal(id, requestCallback, fetchIncluded);
+        requestHandler.getExternal(id, requestCallback, fetchIncluded, params);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
      */
     public void getCollection(@NonNull String id,
                               @NonNull OddCallback<OddCollection> cb,
-                              boolean forceFetchFromApi) {
-        OddCollection stored = (OddCollection)cache.getObject(id);
-        if(!forceFetchFromApi && stored != null) {
-            cb.onSuccess(stored);
-        } else {
-            getCollectionFromApi(id, cb, false);
+                              boolean forceFetchFromApi,
+                              boolean fetchIncluded,
+                              Map<String,List<String>> params) {
+        try {
+            OddCollection stored = (OddCollection) cache.getObject(id);
+            if (!forceFetchFromApi && stored != null && objectHasAllIncluded(stored, RequestHandler.getIncludedParams(params))) {
+                cb.onSuccess(stored);
+            } else {
+                getCollectionFromApi(id, cb, fetchIncluded, params);
+            }
+        } catch (Exception e) {
+            cb.onFailure(e);
         }
     }
 
-    public void getCollection(@NonNull String id, @NonNull OddCallback<OddCollection> cb) {
-        getCollection(id, cb, false);
+    /**
+     * @param id
+     * @param cb OddCallback
+     * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     */
+    public void getCollection(@NonNull String id, @NonNull OddCallback<OddCollection> cb, boolean forceFetchFromApi) {
+        getCollection(id, cb, forceFetchFromApi, false, null);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
      */
     public void getCollectionWithAllRelated(@NonNull final String id,
                                             @NonNull final OddCallback<ObjectWithRelated<OddCollection>> cb,
-                                            boolean forceFetchFromApi) {
+                                            boolean forceFetchFromApi,
+                                            boolean fetchIncluded,
+                                            Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetAllRelatedFromCache(id, cb))
-            getCollectionFromApi(id, new GatherAllRelatedCb<OddCollection>(cb), true);
+            getCollectionFromApi(id, new GatherAllRelatedCb<OddCollection>(cb), fetchIncluded, params);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
      */
     public void getCollectionWithRelationship(@NonNull final String id,
                                               @NonNull final OddCallback<ObjectWithRelated<OddCollection>> cb,
                                               @NonNull final String relationshipName,
-                                              boolean forceFetchFromApi) {
+                                              boolean forceFetchFromApi,
+                                              boolean fetchIncluded,
+                                              Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetRelationshipFromCache(id, relationshipName, cb))
-            getCollectionFromApi(id, new GatherRelationshipCb<>(cb, relationshipName), true);
+            getCollectionFromApi(id, new GatherRelationshipCb<>(cb, relationshipName), fetchIncluded, params);
     }
 
-    private void getCollectionFromApi(String id, OddCallback<OddCollection> cb, boolean fetchIncluded) {
+    /**
+     * @param id
+     * @param cb OddCallback
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
+     */
+    private void getCollectionFromApi(String id, OddCallback<OddCollection> cb, boolean fetchIncluded,
+                                      Map<String,List<String>> params) {
         Callback requestCallback = new RequestCallback<>(cb, new ParseCall<OddCollection>() {
             @Override
             public OddCollection parse(String responseBody) {
                 return parser.parseCollectionResponse(responseBody);
             }
         });
-        requestHandler.getCollection(id, requestCallback);
+        requestHandler.getCollection(id, requestCallback, fetchIncluded, params);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
      */
     public void getEvent(@NonNull String id,
                          @NonNull OddCallback<Event> cb,
-                         boolean forceFetchFromApi) {
-        Event stored = (Event)cache.getObject(id);
-        if(!forceFetchFromApi && stored != null) {
-            cb.onSuccess(stored);
-        } else {
-            getEventFromApi(id, cb, false);
+                         boolean forceFetchFromApi,
+                         boolean fetchIncluded,
+                         Map<String,List<String>> params) {
+       try {
+            Event stored = (Event)cache.getObject(id);
+            if(!forceFetchFromApi && stored != null && objectHasAllIncluded(stored, RequestHandler.getIncludedParams(params))) {
+                cb.onSuccess(stored);
+            } else {
+                getEventFromApi(id, cb, fetchIncluded, params);
+            }
+        } catch (Exception e) {
+            cb.onFailure(e);
         }
     }
 
-    public void getEvent(@NonNull String id, @NonNull OddCallback<Event> cb) {
-        getEvent(id, cb, false);
+    /**
+     * @param id
+     * @param cb OddCallback
+     * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     */
+    public void getEvent(@NonNull String id, @NonNull OddCallback<Event> cb, boolean forceFetchFromApi) {
+        getEvent(id, cb, forceFetchFromApi, false, null);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
      */
     public void getEventWithAllRelated(@NonNull final String id,
-                                               @NonNull final OddCallback<ObjectWithRelated<Event>> cb,
-                                               boolean forceFetchFromApi) {
+                                       @NonNull final OddCallback<ObjectWithRelated<Event>> cb,
+                                       boolean forceFetchFromApi,
+                                       boolean fetchIncluded,
+                                       Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetAllRelatedFromCache(id, cb))
-            getEventFromApi(id, new GatherAllRelatedCb<Event>(cb), true);
+            getEventFromApi(id, new GatherAllRelatedCb<Event>(cb), fetchIncluded, params);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
+     * @param relationshipName
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
      */
     public void getEventWithRelationship(@NonNull final String id,
-                                                 @NonNull final OddCallback<ObjectWithRelated<Event>> cb,
-                                                 @NonNull final String relationshipName,
-                                                 boolean forceFetchFromApi) {
+                                         @NonNull final OddCallback<ObjectWithRelated<Event>> cb,
+                                         @NonNull final String relationshipName,
+                                         boolean forceFetchFromApi,
+                                         boolean fetchIncluded,
+                                         Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetRelationshipFromCache(id, relationshipName, cb))
-            getEventFromApi(id, new GatherRelationshipCb<>(cb, relationshipName), true);
+            getEventFromApi(id, new GatherRelationshipCb<>(cb, relationshipName), fetchIncluded, params);
     }
 
-    private void getEventFromApi(String id, OddCallback<Event> cb, boolean fetchIncluded) {
+    /**
+     * @param id
+     * @param cb OddCallback
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
+     */
+    private void getEventFromApi(String id, OddCallback<Event> cb, boolean fetchIncluded, Map<String,List<String>> params) {
         Callback requestCallback = new RequestCallback<>(cb, new ParseCall<Event>() {
             @Override
             public Event parse(String responseBody) {
                 return parser.parseEventResponse(responseBody);
             }
         });
-        requestHandler.getEvent(id, requestCallback, false);
+        requestHandler.getEvent(id, requestCallback, fetchIncluded, params);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
-     * @param  isLiveStream true if this Media is a liveStream object in the api's catalog otherwise false.
-     *                      If Media#isLive() returns true then then this should be true. **/
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
+     * @param isLiveStream true if this Media is a liveStream object in the api's catalog otherwise false.
+     *                      If Media#isLive() returns true then then this should be true.
+     */
     public void getMedia(@NonNull String id,
                          @NonNull OddCallback<Media> cb,
                          boolean isLiveStream,
-                         boolean forceFetchFromApi) {
-        Media stored = (Media)cache.getObject(id);
-        if(!forceFetchFromApi && stored != null) {
-            cb.onSuccess(stored);
-        } else {
-            getMediaFromApi(id, cb, false, false);
+                         boolean forceFetchFromApi,
+                         boolean fetchIncluded,
+                         Map<String,List<String>> params) {
+
+        try {
+            Media stored = (Media)cache.getObject(id);
+            if(!forceFetchFromApi && stored != null && objectHasAllIncluded(stored, RequestHandler.getIncludedParams(params))) {
+                cb.onSuccess(stored);
+            } else {
+                getMediaFromApi(id, cb, isLiveStream, fetchIncluded, params);
+            }
+        } catch (Exception e) {
+            cb.onFailure(e);
         }
     }
 
     /**
-     * @param  isLiveStream true if this Media is a liveStream object in the api's catalog otherwise false.
-     *                      If Media#isLive() returns true then then this should be true. **/
-    public void getMedia(@NonNull String id, @NonNull OddCallback<Media> cb, boolean isLiveStream) {
-        getMedia(id, cb, isLiveStream, false);
+     * @param id
+     * @param cb OddCallback
+     * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param isLiveStream true if this Media is a liveStream object in the api's catalog otherwise false.
+     *                      If Media#isLive() returns true then then this should be true.
+     */
+    public void getMedia(@NonNull String id, @NonNull OddCallback<Media> cb, boolean isLiveStream, boolean forceFetchFromApi) {
+        getMedia(id, cb, isLiveStream, forceFetchFromApi, false, null);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param params Map of params to be used as query params.  Can be null
      * @param isLiveStream true if this Media is a liveStream object in the api's catalog otherwise false.
      *                      If Media#isLive() returns true then then this should be true.
      */
     public void getMediaWithAllRelated(@NonNull final String id,
                                        boolean isLiveStream,
                                        @NonNull final OddCallback<ObjectWithRelated<Media>> cb,
-                                       boolean forceFetchFromApi) {
+                                       boolean forceFetchFromApi,
+                                       Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetAllRelatedFromCache(id, cb))
-            getMediaFromApi(id, new GatherAllRelatedCb<>(cb), isLiveStream, true);
+            getMediaFromApi(id, new GatherAllRelatedCb<>(cb), isLiveStream, true, params);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
+     * @param relationshipName
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param params Map of params to be used as query params.  Can be null
      * @param isLiveStream true if this Media is a liveStream object in the api's catalog otherwise false.
      *                      If Media#isLive() returns true then then this should be true.
      */
     public void getMediaWithRelationship(@NonNull final String id,
                                                  @NonNull final OddCallback<ObjectWithRelated<Media>> cb,
-                                                boolean isLiveStream,
+                                                 boolean isLiveStream,
                                                  @NonNull final String relationshipName,
-                                         boolean forceFetchFromApi) {
+                                                 boolean forceFetchFromApi,
+                                                 Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetRelationshipFromCache(id, relationshipName, cb))
-            getMediaFromApi(id, new GatherRelationshipCb<>(cb, relationshipName), isLiveStream, true);
+            getMediaFromApi(id, new GatherRelationshipCb<>(cb, relationshipName), isLiveStream, true, params);
     }
 
-    private void getMediaFromApi(String id, OddCallback<Media> cb, boolean isLiveStream,  boolean fetchIncluded) {
+    /**
+     * @param id
+     * @param cb OddCallback
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
+     * @param isLiveStream true if this Media is a liveStream object in the api's catalog otherwise false.
+     *                      If Media#isLive() returns true then then this should be true.
+     */
+    private void getMediaFromApi(String id, OddCallback<Media> cb, boolean isLiveStream,  boolean fetchIncluded, Map<String,List<String>> params) {
         Callback requestCallback = new RequestCallback<>(cb, new ParseCall<Media>() {
             @Override
             public Media parse(String responseBody) {
@@ -303,118 +473,180 @@ public class CachingApiCaller {
             }
         });
         if(isLiveStream)
-            requestHandler.getLiveStream(id, requestCallback);
+            requestHandler.getLiveStream(id, requestCallback, fetchIncluded, params);
         else
-            requestHandler.getVideo(id, requestCallback);
+            requestHandler.getVideo(id, requestCallback, fetchIncluded, params);
     }
 
     /**
-     * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api */
+     * @param id
+     * @param cb OddCallback
+     * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
+     */
     public void getView(@NonNull String id,
                         @NonNull OddCallback<OddView> cb,
-                        boolean forceFetchFromApi) {
-        OddView stored = (OddView)cache.getObject(id);
-        if(!forceFetchFromApi && stored != null) {
-            cb.onSuccess(stored);
-        } else {
-            getViewFromApi(id, cb, true);
+                        boolean forceFetchFromApi,
+                        boolean fetchIncluded,
+                        Map<String,List<String>> params) {
+        try {
+            OddView stored = (OddView)cache.getObject(id);
+            if(!forceFetchFromApi && stored != null && objectHasAllIncluded(stored, RequestHandler.getIncludedParams(params))) {
+                cb.onSuccess(stored);
+            } else {
+                getViewFromApi(id, cb, fetchIncluded, params);
+            }
+        } catch (Exception e) {
+            cb.onFailure(e);
         }
     }
 
-    public void getView(@NonNull String id, @NonNull OddCallback<OddView> cb) {
-        getView(id, cb, false);
+    public void getView(@NonNull String id, @NonNull OddCallback<OddView> cb, boolean forceFetchFromApi) {
+        getView(id, cb, forceFetchFromApi, false, null);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param params Map of params to be used as query params.  Can be null
      */
     public void getViewWithAllRelated(@NonNull final String id,
-                                       @NonNull final OddCallback<ObjectWithRelated<OddView>> cb,
-                                       boolean forceFetchFromApi) {
+                                      @NonNull final OddCallback<ObjectWithRelated<OddView>> cb,
+                                      boolean forceFetchFromApi,
+                                      Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetAllRelatedFromCache(id, cb))
-            getViewFromApi(id, new GatherAllRelatedCb<>(cb), true);
+            getViewFromApi(id, new GatherAllRelatedCb<>(cb), true, params);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
+     * @param relationshipName
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param params Map of params to be used as query params.  Can be null
      */
     public void getViewWithRelationship(@NonNull final String id,
-                                         @NonNull final OddCallback<ObjectWithRelated<OddView>> cb,
-                                         @NonNull final String relationshipName,
-                                         boolean forceFetchFromApi) {
+                                        @NonNull final OddCallback<ObjectWithRelated<OddView>> cb,
+                                        @NonNull final String relationshipName,
+                                        boolean forceFetchFromApi,
+                                        Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetRelationshipFromCache(id, relationshipName, cb))
-            getViewFromApi(id, new GatherRelationshipCb<>(cb, relationshipName), true);
+            getViewFromApi(id, new GatherRelationshipCb<>(cb, relationshipName), true, params);
     }
 
-    private void getViewFromApi(String id, OddCallback<OddView> cb, boolean fetchIncluded) {
+    /**
+     * @param id
+     * @param cb OddCallback
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
+     */
+    private void getViewFromApi(String id, OddCallback<OddView> cb, boolean fetchIncluded, Map<String,List<String>> params) {
         Callback requestCallback = new RequestCallback<>(cb, new ParseCall<OddView>() {
             @Override
             public OddView parse(String responseBody) {
                 return parser.parseViewResponse(responseBody);
             }
         });
-        requestHandler.getView(id, requestCallback);
+        requestHandler.getView(id, requestCallback, fetchIncluded, params);
     }
 
     /**
-     * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api */
+     * @param id
+     * @param cb OddCallback
+     * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
+     */
     public void getArticle(@NonNull String id,
                            @NonNull OddCallback<Article> cb,
-                           boolean forceFetchFromApi) {
-        Article stored = (Article)cache.getObject(id);
-        if(!forceFetchFromApi && stored != null) {
-            cb.onSuccess(stored);
-        } else {
-            getArticleFromApi(id, cb, false);
+                           boolean forceFetchFromApi,
+                           boolean fetchIncluded,
+                           Map<String,List<String>> params) {
+        try {
+            Article stored = (Article)cache.getObject(id);
+            if(!forceFetchFromApi && stored != null && objectHasAllIncluded(stored, RequestHandler.getIncludedParams(params))) {
+                cb.onSuccess(stored);
+            } else {
+                getArticleFromApi(id, cb, fetchIncluded, params);
+            }
+        } catch (Exception e) {
+            cb.onFailure(e);
         }
     }
 
-    public void getArticle(@NonNull String id, @NonNull OddCallback<Article> cb) {
-        getArticle(id, cb, false);
+    /**
+     * @param id
+     * @param cb OddCallback
+     * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     */
+    public void getArticle(@NonNull String id, @NonNull OddCallback<Article> cb, boolean forceFetchFromApi) {
+        getArticle(id, cb, forceFetchFromApi, false, null);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param params Map of params to be used as query params.  Can be null
      */
     public void getArticleWithAllRelated(@NonNull final String id,
-                                      @NonNull final OddCallback<ObjectWithRelated<Article>> cb,
-                                      boolean forceFetchFromApi) {
+                                         @NonNull final OddCallback<ObjectWithRelated<Article>> cb,
+                                         boolean forceFetchFromApi,
+                                         Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetAllRelatedFromCache(id, cb))
-            getArticleFromApi(id, new GatherAllRelatedCb<>(cb), true);
+            getArticleFromApi(id, new GatherAllRelatedCb<>(cb), true, params);
     }
 
     /**
+     * @param id
+     * @param cb OddCallback
+     * @param relationshipName
      * @param forceFetchFromApi if true, do not attempt to get from cache. Get directly from api
+     * @param params Map of params to be used as query params.  Can be null
      */
     public void getArticleWithRelationship(@NonNull final String id,
-                                        @NonNull final OddCallback<ObjectWithRelated<Article>> cb,
-                                        @NonNull final String relationshipName,
-                                        boolean forceFetchFromApi) {
+                                           @NonNull final OddCallback<ObjectWithRelated<Article>> cb,
+                                           @NonNull final String relationshipName,
+                                           boolean forceFetchFromApi,
+                                           Map<String,List<String>> params) {
         if(forceFetchFromApi || !completeGetRelationshipFromCache(id, relationshipName, cb))
-            getArticleFromApi(id, new GatherRelationshipCb<>(cb, relationshipName), true);
+            getArticleFromApi(id, new GatherRelationshipCb<>(cb, relationshipName), true, params);
     }
 
-    private void getArticleFromApi(String id, OddCallback<Article> cb, boolean fetchIncluded) {
+    /**
+     * @param id
+     * @param cb OddCallback
+     * @param fetchIncluded if true will use "include" params
+     * @param params Map of params to be used as query params.  Can be null
+     */
+    private void getArticleFromApi(String id, OddCallback<Article> cb, boolean fetchIncluded, Map<String,List<String>> params) {
         Callback requestCallback = new RequestCallback<>(cb, new ParseCall<Article>() {
             @Override
             public Article parse(String responseBody) {
                 return parser.parseArticleResponse(responseBody);
             }
         });
-        requestHandler.getArticle(id, requestCallback, fetchIncluded);
+        requestHandler.getArticle(id, requestCallback, fetchIncluded, params);
     }
 
     /** attempt to complete callback with data from cache
      * @return true if all data was in the cache so the callback was completed, otherwise false */
     private <T extends OddObject> boolean completeGetAllRelatedFromCache (
             @NonNull String id, @NonNull OddCallback<ObjectWithRelated<T>> cb) {
-        T stored = (T)cache.getObject(id);
-        if (stored != null) {
-            List<OddObject> related = cache.getRelatedObjectsOrNull(stored);
-            if (related != null) {
-                cb.onSuccess(new ObjectWithRelated<>(stored, related));
-                return true;
+
+        try {
+            T stored = (T)cache.getObject(id);
+            if (stored != null ) {
+                List<OddObject> related = cache.getRelatedObjectsOrNull(stored);
+                if (related != null) {
+                    cb.onSuccess(new ObjectWithRelated<>(stored, related));
+                    return true;
+                }
             }
+        } catch (Exception e) {
+            cb.onFailure(e);
         }
         return false;
     }
@@ -423,21 +655,26 @@ public class CachingApiCaller {
      * @return true if all data was in the cache so the callback was completed, otherwise false */
     private <T extends OddObject> boolean completeGetRelationshipFromCache (
             @NonNull String id, @NonNull String relationshipName, @NonNull OddCallback<ObjectWithRelated<T>> cb) {
-        T stored = (T)cache.getObject(id);
-        if (stored != null) {
-            List<Identifier> ids = stored.getIdentifiersByRelationship(relationshipName);
-            if(ids != null) {
-                List<OddObject> relatedList = new ArrayList<>(ids.size());
-                for (Identifier identifier : ids) {
-                    OddObject related = cache.getObject(identifier);
-                    if(related != null)
-                        relatedList.add(related);
-                    else
-                        return false; // at least one object was null so the cb could not be completed from the cache
+
+        try {
+            T stored = (T)cache.getObject(id);
+            if (stored != null) {
+                List<Identifier> ids = stored.getIdentifiersByRelationship(relationshipName);
+                if(ids != null) {
+                    List<OddObject> relatedList = new ArrayList<>(ids.size());
+                    for (Identifier identifier : ids) {
+                        OddObject related = cache.getObject(identifier);
+                        if(related != null)
+                            relatedList.add(related);
+                        else
+                            return false; // at least one object was null so the cb could not be completed from the cache
+                    }
+                    cb.onSuccess(new ObjectWithRelated<T>(stored, relatedList));
+                    return true;
                 }
-                cb.onSuccess(new ObjectWithRelated<T>(stored, relatedList));
-                return true;
             }
+        } catch (Exception e) {
+            cb.onFailure(e);
         }
         return false;
     }
@@ -597,5 +834,29 @@ public class CachingApiCaller {
 
     public void clearCache() {
         cache.clear();
+    }
+
+    /**
+     * Returns true if an OddObject has included objects for each included param
+     * @param oddObject
+     * @param includeParams
+     * @param <T>
+     * @return
+     */
+    private <T extends OddObject> boolean objectHasAllIncluded(T oddObject, List<String> includeParams) {
+
+        if (includeParams == null || includeParams.isEmpty()) {
+            return true;
+        }
+
+        for (String i: includeParams) {
+            List included = oddObject.getIncludedByRelationship(i);
+
+            if (included.size() == 0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
