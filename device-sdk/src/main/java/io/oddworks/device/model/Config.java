@@ -8,13 +8,15 @@ public class Config {
     private final MetricsConfig metricsConfig;
 
     private LinkedHashMap<String, String> views;
+    private String appMap;
 
     public Config(LinkedHashMap<String, String> views,
                   boolean authEnabled,
-                  MetricsConfig metricsConfig) {
+                  MetricsConfig metricsConfig, String appMap) {
         this.views = views;
         this.authEnabled = authEnabled;
         this.metricsConfig = metricsConfig;
+        this.appMap = appMap;
     }
 
 
@@ -28,5 +30,13 @@ public class Config {
 
     public LinkedHashMap<String, String> getViews() {
         return views;
+    }
+
+    public String getAppMap() {
+        return appMap;
+    }
+
+    public void setAppMap(String appMap) {
+        this.appMap = appMap;
     }
 }
