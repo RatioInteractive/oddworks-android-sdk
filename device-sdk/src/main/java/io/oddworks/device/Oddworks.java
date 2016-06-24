@@ -20,7 +20,7 @@ public class Oddworks {
     public static final String QUERY_PARAM_INCLUDE = "include";
     public static final String QUERY_PARAM_LIMIT = "limit";
     public static final String QUERY_PARAM_OFFSET = "offset";
-    public static final String QUERY_PARAM_TERM = "term";
+    public static final String QUERY_PARAM_TERM = "q";
 
 
     public static final String API_HOST = "device.oddworks.io";
