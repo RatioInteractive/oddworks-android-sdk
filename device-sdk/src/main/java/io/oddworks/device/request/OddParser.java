@@ -426,8 +426,11 @@ public class OddParser {
             JSONObject rawFeatures = parseFeatures(rawAttributes);
             MetricsConfig metrics = parseMetrics(rawFeatures);
 
+            //Get app_map
+            JSONObject appMap = JSON.getJSONObject(rawFeatures, "app_map", true);
+
             boolean authEnabled = isAuthEnabled(rawFeatures);
-            return new Config(views, authEnabled, metrics);
+            return new Config(views, authEnabled, metrics, appMap.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
