@@ -276,13 +276,13 @@ public class OddParser {
 
         Player player = null;
         switch (type) {
-            case NATIVE:
             case BRIGHTCOVE:
                 player = new Player(type);
                 break;
             case EXTERNAL:
                 player = parseExternalPlayer(rawPlayer);
                 break;
+            case NATIVE:
             case OOYALA:
                 player = parseOoyalaPlayer(rawPlayer);
                 break;
