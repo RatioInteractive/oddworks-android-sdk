@@ -432,8 +432,11 @@ public class OddParser {
             //Get styles
             JSONObject styles = JSON.getJSONObject(rawFeatures, "styles", true);
 
+            //Get channels
+            JSONObject channels = JSON.getJSONObject(rawFeatures, "livechannels", true);
+
             boolean authEnabled = isAuthEnabled(rawFeatures);
-            return new Config(views, authEnabled, metrics, appMap.toString(), styles.toString());
+            return new Config(views, authEnabled, metrics, appMap.toString(), styles.toString(), channels.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
