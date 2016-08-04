@@ -15,6 +15,7 @@ public class OddCollection extends OddObject {
 
     private String title;
     private String subtitle;
+    private String program_info;
     private String description;
     private MediaImage mediaImage;
     private DateTime releaseDate;
@@ -35,6 +36,10 @@ public class OddCollection extends OddObject {
         return subtitle;
     }
 
+    public String getProgramInfo() {
+        return program_info;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -51,6 +56,7 @@ public class OddCollection extends OddObject {
     public void setAttributes(Map<String, Object> attributes) {
         this.title = getString(attributes, "title", null);
         this.subtitle = getString(attributes, "subtitle", null);
+        this.program_info = getString(attributes, "program_info", null);
         this.description = getString(attributes, "description", null);
         this.mediaImage = (MediaImage) attributes.get("mediaImage");
         this.releaseDate = Util.getDateTime(attributes, "releaseDate", null);
@@ -61,6 +67,7 @@ public class OddCollection extends OddObject {
         HashMap<String, Object> attributes = new HashMap<>();
         attributes.put("title", getTitle());
         attributes.put("subtitle", getSubtitle());
+        attributes.put("program_info", getProgramInfo());
         attributes.put("description", getDescription());
         attributes.put("mediaImage", getMediaImage());
         attributes.put("releaseDate", getReleaseDate());
@@ -82,6 +89,7 @@ public class OddCollection extends OddObject {
         return "OddCollection{" +
                 "title='" + getTitle() + '\'' +
                 ", subtitle='" + getSubtitle() + '\'' +
+                ", program_info='" + getProgramInfo() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", mediaImage=" + getMediaImage() +
                 ", releaseDate=" + getReleaseDate() +
