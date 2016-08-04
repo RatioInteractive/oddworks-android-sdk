@@ -10,15 +10,17 @@ public class Config {
     private LinkedHashMap<String, String> views;
     private String appMap;
     private String styles;
+    private String channels;
 
     public Config(LinkedHashMap<String, String> views,
                   boolean authEnabled,
-                  MetricsConfig metricsConfig, String appMap, String styles) {
+                  MetricsConfig metricsConfig, String appMap, String styles, String channels) {
         this.views = views;
         this.authEnabled = authEnabled;
         this.metricsConfig = metricsConfig;
         this.appMap = appMap;
         this.styles = styles;
+        this.channels = channels;
     }
 
 
@@ -48,5 +50,13 @@ public class Config {
 
     public void setStyles(String styles) {
         this.styles = styles;
+    }
+
+    public void setChannels(String channels) {
+        this.channels = channels;
+    }
+
+    public String getChannels() {
+        return channels;
     }
 }
