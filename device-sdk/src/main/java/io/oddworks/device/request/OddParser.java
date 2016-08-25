@@ -435,8 +435,12 @@ public class OddParser {
             //Get channels
             JSONObject channels = JSON.getJSONObject(rawFeatures, "livechannels", true);
 
+            //Get Chromecast
+            JSONObject chromecastOptions = JSON.getJSONObject(rawFeatures, "chromecast", true);
+            String receiverId = chromecastOptions.getString("appId");
+
             boolean authEnabled = isAuthEnabled(rawFeatures);
-            return new Config(views, authEnabled, metrics, appMap.toString(), styles.toString(), channels.toString());
+            return new Config(views, authEnabled, metrics, appMap.toString(), styles.toString(), channels.toString(), receiverId);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -11,16 +11,18 @@ public class Config {
     private String appMap;
     private String styles;
     private String channels;
+    private String receiverId;
 
     public Config(LinkedHashMap<String, String> views,
                   boolean authEnabled,
-                  MetricsConfig metricsConfig, String appMap, String styles, String channels) {
+                  MetricsConfig metricsConfig, String appMap, String styles, String channels, String receiverId) {
         this.views = views;
         this.authEnabled = authEnabled;
         this.metricsConfig = metricsConfig;
         this.appMap = appMap;
         this.styles = styles;
         this.channels = channels;
+        this.receiverId = receiverId;
     }
 
 
@@ -58,5 +60,9 @@ public class Config {
 
     public String getChannels() {
         return channels;
+    }
+
+    public String getReceiverId() {
+        return receiverId;
     }
 }
