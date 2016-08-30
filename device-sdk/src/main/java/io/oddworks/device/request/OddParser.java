@@ -439,8 +439,15 @@ public class OddParser {
             JSONObject chromecastOptions = JSON.getJSONObject(rawFeatures, "chromecast", true);
             String receiverId = chromecastOptions.getString("appId");
 
+            //Get TVE
+            JSONObject tve = JSON.getJSONObject(rawFeatures, "tve_authentication", true);
+
+            //Get Schedules
+            JSONObject schedules = JSON.getJSONObject(rawFeatures, "schedules", true);
+            String schedulesUri = schedules.getString("uri");
+
             boolean authEnabled = isAuthEnabled(rawFeatures);
-            return new Config(views, authEnabled, metrics, appMap.toString(), styles.toString(), channels.toString(), receiverId);
+            return new Config(views, authEnabled, metrics, appMap.toString(), styles.toString(), channels.toString(), receiverId, tve.toString(), schedulesUri);
         } catch (JSONException e) {
             e.printStackTrace();
         }
