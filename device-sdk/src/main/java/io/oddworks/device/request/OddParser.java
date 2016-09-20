@@ -64,8 +64,26 @@ public class OddParser {
         String aspect3x4 = JSON.getString(data, "aspect3x4");
         String aspect1x1 = JSON.getString(data, "aspect1x1");
         String aspect2x3 = JSON.getString(data, "aspect2x3");
+        String aspect16x9_w152 = JSON.getString(data, "aspect16x9_w152");
+        String aspect16x9_w390 = JSON.getString(data, "aspect16x9_w390");
+        String aspect16x9_w548 = JSON.getString(data, "aspect16x9_w548");
+        String aspect16x9_w768 = JSON.getString(data, "aspect16x9_w768");
+        String aspect16x9_w1152 = JSON.getString(data, "aspect16x9_w1152");
+        String aspect16x9_w1536 = JSON.getString(data, "aspect16x9_w1536");
+        String aspect16x9_w1920 = JSON.getString(data, "aspect16x9_w1920");
+        String aspect16x9_w2304 = JSON.getString(data, "aspect16x9_w2304");
+        String aspect16x9_w3072 = JSON.getString(data, "aspect16x9_w3072");
 
-        return new MediaImage(aspect16x9, aspect3x4, aspect4x3, aspect1x1, aspect2x3);
+        return new MediaImage(aspect16x9, aspect3x4, aspect4x3, aspect1x1, aspect2x3,
+                aspect16x9_w152,
+                aspect16x9_w390,
+                aspect16x9_w548,
+                aspect16x9_w768,
+                aspect16x9_w1152,
+                aspect16x9_w1536,
+                aspect16x9_w1920,
+                aspect16x9_w2304,
+                aspect16x9_w3072);
     }
 
     public MediaAd parseMediaAd(final JSONObject data) throws JSONException {
