@@ -18,7 +18,7 @@ public class ExternalTest {
     private String title = "Odd the Great and Powerful";
     private String description = "Odd is good! Odd is great!";
     private String url = "http://oddnetworks.com/foo.html";
-    private MediaImage mediaImage = new MediaImage("a", "b", "c", "d", "e");
+    private MediaImage mediaImage = new MediaImage("a", "b", "c", "d", "e", "f", "e", "g", "h", "i", "j", "k", "l", "m");
     private HashMap<String, Object> attributes = new HashMap<>();
 
     @Before

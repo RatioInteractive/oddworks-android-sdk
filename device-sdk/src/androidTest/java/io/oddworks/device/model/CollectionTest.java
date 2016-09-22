@@ -22,7 +22,7 @@ public class CollectionTest {
     private String subtitle = null;
     private String description = "Odd is good! Odd is great!";
     private DateTime releaseDate = new DateTime("2015-04-20T16:20:00-0400");
-    private MediaImage mediaImage = new MediaImage("a", "b", "c", "d", "e");
+    private MediaImage mediaImage = new MediaImage("a", "b", "c", "d", "e", "f", "e", "g", "h", "i", "j", "k", "l", "m");
     private OddCollection collection = new OddCollection(id, type);
     private Map<String, Object> attributes = new HashMap<>();
 
@@ -104,7 +104,7 @@ public class CollectionTest {
         otherAttributes.put("subtitle", null);
         otherAttributes.put("description", "ZZZ");
         otherAttributes.put("releaseDate", new DateTime("2012-11-13T09:30:00+0100"));
-        otherAttributes.put("mediaImage", new MediaImage("e", "d", "c", "b", "a"));
+        otherAttributes.put("mediaImage", new MediaImage("a", "b", "c", "d", "e", "f", "e", "g", "h", "i", "j", "k", "l", "m"));
 
         OddCollection collection2 = new OddCollection("1", "type");
         collection2.setAttributes(otherAttributes);

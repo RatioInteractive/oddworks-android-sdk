@@ -26,7 +26,7 @@ public class ArticleTest {
     private String source = "asourceisasourceofcourseofcourse";
     private String url = "http://oddnetworks.com/foo.html";
     private DateTime createdAt = new DateTime("2015-12-01T01:45:21Z");
-    private MediaImage mediaImage = new MediaImage("a", "b", "c", "d", "e");
+    private MediaImage mediaImage = new MediaImage("a", "b", "c", "d", "e", "f", "e", "g", "h", "i", "j", "k", "l", "m");
     private HashMap<String, Object> attributes = new HashMap<>();
 
     @Before

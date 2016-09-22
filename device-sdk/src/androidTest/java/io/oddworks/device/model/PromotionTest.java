@@ -22,7 +22,7 @@ public class PromotionTest {
         HashMap<String, Object> attributes = new HashMap<>();
         attributes.put("title", "title1");
         attributes.put("description", "description1");
-        attributes.put("mediaImage", new MediaImage("a", "b", "c", "d", "e"));
+        attributes.put("mediaImage", new MediaImage("a", "b", "c", "d", "e", "f", "e", "g", "h", "i", "j", "k", "l", "m"));
         mPromotion.setAttributes(attributes);
     }
 

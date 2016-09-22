@@ -31,7 +31,7 @@ public class EventTest {
     private DateTime dateTimeStart = new DateTime("2016-02-13T08:00:00-0600");
     private DateTime dateTimeEnd = new DateTime("2016-02-14T17:59:00-0600");
     private String location = "Las Vegas, NV";
-    private MediaImage mediaImage = new MediaImage("a", "b", "c", "d", "e");
+    private MediaImage mediaImage = new MediaImage("a", "b", "c", "d", "e", "f", "e", "g", "h", "i", "j", "k", "l", "m");
     private HashMap<String, Object> attributes = new HashMap<>();
 
     @Before

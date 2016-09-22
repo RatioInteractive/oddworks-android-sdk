@@ -28,7 +28,7 @@ public class MediaTest {
     private String url = "http://oddnetworks.com";
     private int duration = 2345;
     private MediaAd mediaAd = new MediaAd();
-    private MediaImage mediaImage = new MediaImage("a", "b", "c", "d", "e");
+    private MediaImage mediaImage = new MediaImage("a", "b", "c", "d", "e", "f", "e", "g", "h", "i", "j", "k", "l", "m");
     private Media video = new Media(id, typeVideo);
     private HashMap<String, Object> attributes = new HashMap<>();
 
