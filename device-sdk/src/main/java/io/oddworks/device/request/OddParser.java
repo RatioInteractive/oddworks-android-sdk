@@ -464,8 +464,15 @@ public class OddParser {
             JSONObject schedules = JSON.getJSONObject(rawFeatures, "schedules", true);
             String schedulesUri = schedules.getString("uri");
 
+            //Get ErrorCollection
+            JSONObject errorCollectionJson = JSON.getJSONObject(rawFeatures, "error_collection", false);
+            String errorCollection = null;
+            if (errorCollectionJson != null) {
+                errorCollection = errorCollectionJson.toString();
+            }
+
             boolean authEnabled = isAuthEnabled(rawFeatures);
-            return new Config(views, authEnabled, metrics, appMap.toString(), styles.toString(), channels.toString(), receiverId, tve.toString(), schedulesUri);
+            return new Config(views, authEnabled, metrics, appMap.toString(), styles.toString(), channels.toString(), receiverId, tve.toString(), schedulesUri, errorCollection);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -14,10 +14,11 @@ public class Config {
     private String receiverId;
     private String tveConfig;
     private String schedulesUri;
+    private String errorCollection;
 
     public Config(LinkedHashMap<String, String> views,
                   boolean authEnabled,
-                  MetricsConfig metricsConfig, String appMap, String styles, String channels, String receiverId, String tveConfig, String schedulesUri) {
+                  MetricsConfig metricsConfig, String appMap, String styles, String channels, String receiverId, String tveConfig, String schedulesUri, String errorCollection) {
         this.views = views;
         this.authEnabled = authEnabled;
         this.metricsConfig = metricsConfig;
@@ -27,6 +28,7 @@ public class Config {
         this.receiverId = receiverId;
         this.tveConfig = tveConfig;
         this.schedulesUri = schedulesUri;
+        this.errorCollection = errorCollection;
     }
 
 
@@ -84,5 +86,13 @@ public class Config {
 
     public void setSchedulesUri(String schedulesUri) {
         this.schedulesUri = schedulesUri;
+    }
+
+    public String getErrorCollection() {
+        return errorCollection;
+    }
+
+    public void setErrorCollection(String errorCollection) {
+        this.errorCollection = errorCollection;
     }
 }
